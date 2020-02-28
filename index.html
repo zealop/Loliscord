@@ -250,9 +250,10 @@
                 attachMediaStream = function(element, stream) {
                     console.log('DEPRECATED, attachMediaStream will soon be removed.');
                     element.srcObject = stream;
+					element.play();
                  };
-
-                navigator.getUserMedia({"audio":USE_AUDIO, "video":USE_VIDEO},
+	
+                navigator.mediaDevices.getUserMedia({"audio":USE_AUDIO, "video":USE_VIDEO},
                     function(stream) { /* user accepted access to a/v */
                         console.log("Access granted to audio/video");
                         local_media_stream = stream;
