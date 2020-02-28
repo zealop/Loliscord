@@ -232,7 +232,7 @@
             /***********************/
             /** Local media stuff **/
             /***********************/
-            function setup_local_media(callback, errorback) {
+            async function setup_local_media(callback, errorback) {
                 if (local_media_stream != null) {  /* ie, if we've already been initialized */
                     if (callback) callback();
                     return; 
