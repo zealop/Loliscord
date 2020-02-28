@@ -10,7 +10,7 @@ function clickcreateoffer() {
   createOfferPromise.then(createOfferDone, createOfferFailed);
   //POST method will be shortened later when upgrade to angular
   var xhttp = new XMLHttpRequest();
-  xhttp.open("GET", "http://127.0.0.1:8000/url");
+  xhttp.open("GET", "https://loliscordapi.herokuapp.com/url");
   xhttp.send();
 }
 
