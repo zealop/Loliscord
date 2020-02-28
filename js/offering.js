@@ -9,9 +9,26 @@ function clickcreateoffer() {
   createOfferPromise = peerConnection.createOffer();
   createOfferPromise.then(createOfferDone, createOfferFailed);
   //POST method will be shortened later when upgrade to angular
-  var xhttp = new XMLHttpRequest();
-  xhttp.open("GET", "https://loliscordapi.herokuapp.com/url");
-  xhttp.send();
+  // create an XHR object
+const xhr = new XMLHttpRequest();
+xhr.responseType = 'text';
+
+// listen for `onload` event
+xhr.onload = () => {
+    // process response
+    if (xhr.status == 200) {
+        // parse JSON data
+        console.log(JSON.parse(xhr.response));
+    } else {
+        console.error('Error!');
+    }
+};
+
+// create a `GET` request
+xhr.open('GET', 'https://loliscordapi.herokuapp.com/');
+
+// send request
+xhr.send();
 }
 
 function createOfferDone(offer) {
