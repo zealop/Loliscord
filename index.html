@@ -2,10 +2,11 @@
 <html>
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
         <!-- This adapter.js file de-prefixes the webkit* and moz* prefixed RTC
              methods. When RTC becomes a more solid standard, this adapter should no
              longer be necessary. -->
-        <!-- <script src="https://webrtc.googlecode.com/svn/trunk/samples/js/base/adapter.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/adapterjs/0.15.4/adapter.min.js"></script>
         <style>
             html, body { 
                 background-color: #333; 
@@ -17,7 +18,7 @@
             }
         </style>
 
-        <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+       
         <script>
             /** CONFIG **/
             var SIGNALING_SERVER = "https://loliscordapi.herokuapp.com";
@@ -246,18 +247,14 @@
                 console.log("Requesting access to local audio / video inputs");
 
 
-                navigator.getUserMedia = ( navigator.getUserMedia ||
-                       navigator.webkitGetUserMedia ||
-                       navigator.mozGetUserMedia ||
-                       navigator.msGetUserMedia);
 
                 attachMediaStream = function(element, stream) {
                     console.log('DEPRECATED, attachMediaStream will soon be removed.');
                     element.srcObject = stream;
                  };
 
-                navigator.getUserMedia({"audio":USE_AUDIO, "video":USE_VIDEO},
-                    function(stream) { /* user accepted access to a/v */
+                navigator.mediaDevices.getUserMedia({"audio":USE_AUDIO, "video":USE_VIDEO})
+                    .then(function(stream) { /* user accepted access to a/v */
                         console.log("Access granted to audio/video");
                         local_media_stream = stream;
                         var local_media = USE_VIDEO ? $("<video>") : $("<audio>");
@@ -268,8 +265,8 @@
                         attachMediaStream(local_media[0], stream);
 
                         if (callback) callback();
-                    },
-                    function() { /* user denied access to a/v */
+                    })
+                    .catch(function() { /* user denied access to a/v */
                         console.log("Access denied for audio/video");
                         alert("You chose not to provide access to the camera/microphone, demo will not work.");
                         if (errorback) errorback();
