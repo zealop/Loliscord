@@ -266,8 +266,11 @@
 
                         if (callback) callback();
                     })
-                    .catch(function() { /* user denied access to a/v */
+                    .catch(function(err) { /* user denied access to a/v */
                         console.log("Access denied for audio/video");
+
+                        console.log(err.name);
+                        console.log(err.message);
                         alert("You chose not to provide access to the camera/microphone, demo will not work.");
                         if (errorback) errorback();
                     });
