@@ -246,13 +246,17 @@
                 console.log("Requesting access to local audio / video inputs");
 
 
+                navigator.getUserMedia = ( navigator.getUserMedia ||
+                       navigator.webkitGetUserMedia ||
+                       navigator.mozGetUserMedia ||
+                       navigator.msGetUserMedia);
 
                 attachMediaStream = function(element, stream) {
                     console.log('DEPRECATED, attachMediaStream will soon be removed.');
                     element.srcObject = stream;
                  };
 
-                navigator.mediaDevices.getUserMedia({"audio":USE_AUDIO, "video":USE_VIDEO},
+                navigator.getUserMedia({"audio":USE_AUDIO, "video":USE_VIDEO},
                     function(stream) { /* user accepted access to a/v */
                         console.log("Access granted to audio/video");
                         local_media_stream = stream;
@@ -260,7 +264,6 @@
                         local_media.attr("autoplay", "autoplay");
                         local_media.attr("muted", "true"); /* always mute ourselves by default */
                         local_media.attr("controls", "");
-                        local_media.srcObject = stream;
                         $('body').append(local_media);
                         attachMediaStream(local_media[0], stream);
 
