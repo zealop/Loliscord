@@ -3,14 +3,18 @@ ul{
 
     li{
         font-size: 20px;
-
         a{
+            color: black;
             text-decoration: none;
+            font-weight: 400;
         }
-    }
-    li:hover{
-        font-size: 22px;
-        left: 1px;
+        a:hover{
+            font-size: 22px;
+            left: 1px;
+            color: red ;
+            font-weight: 500;
+        }
+
     }
 
 

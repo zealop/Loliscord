@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {Icon} from '../Icon';
 
 @Component({
   selector: 'app-side-menu-bar',
@@ -7,10 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SideMenuBarComponent implements OnInit {
 
-  icons: Array<any> = [
-    "abc",
-    "def",
-    "clgt"
+  icons:Icon[] = [
+    {name: "ABC"},
+    {name: "DEF"},
+    {name: "CLGT"},
+    {name: "HAHA"}
   ]
   constructor() { }
 
