@@ -1,0 +1,17 @@
+ul{
+    list-style-type: none;
+
+    li{
+        font-size: 20px;
+
+        a{
+            text-decoration: none;
+        }
+    }
+    li:hover{
+        font-size: 22px;
+        left: 1px;
+    }
+
+
+}
