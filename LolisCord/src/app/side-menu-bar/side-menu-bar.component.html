@@ -1,7 +1,7 @@
 <ul>
     <li *ngFor="let icon of icons">
-        <a href="#">
+        <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="{{icon.detail}}">
             {{icon.name}}
-        </a>
+        </button>
     </li>
 </ul>

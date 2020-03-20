@@ -3,14 +3,16 @@ ul{
 
     li{
         font-size: 20px;
-        a{
-            color: black;
-            text-decoration: none;
+        button{
+            color: yellow;
             font-weight: 400;
+            margin: 2px;
+            border-radius: 2px;
+            width: 100px;
         }
-        a:hover{
+        button:hover{
             font-size: 22px;
-            left: 1px;
+            margin-left: 10px;
             color: red ;
             font-weight: 500;
         }

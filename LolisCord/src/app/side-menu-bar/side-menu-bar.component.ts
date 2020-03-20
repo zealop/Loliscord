@@ -9,10 +9,10 @@ import {Icon} from '../Icon';
 export class SideMenuBarComponent implements OnInit {
 
   icons:Icon[] = [
-    {name: "ABC"},
-    {name: "DEF"},
-    {name: "CLGT"},
-    {name: "HAHA"}
+    {name: "ABC", detail: "1"},
+    {name: "DEF", detail: "2"},
+    {name: "CLGT", detail: "3"},
+    {name: "HAHA", detail: "4"}
   ]
   constructor() { }
 

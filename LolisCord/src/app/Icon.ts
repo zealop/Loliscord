@@ -1,3 +1,4 @@
 export interface Icon{
-    name: string;
+    name: string,
+    detail: string,
 }
