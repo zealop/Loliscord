@@ -1,0 +1,11 @@
+.container-fluid{
+  height: 100%;
+}
+.row {
+  height: 100%;
+  .col-auto, .col {
+    margin: 0;
+    border: none;
+    padding: 0;
+  }
+}
