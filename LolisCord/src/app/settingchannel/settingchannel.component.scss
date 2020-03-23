@@ -1,0 +1,23 @@
+div{
+    header:hover{
+    }
+    header{
+        display: flex;
+        justify-content: space-between;
+
+        .off_icon{
+            content:url('/assets//off_icon.svg');
+            transform: rotate(45deg);
+            transition: transform 1s;
+        }
+
+        .list_icon{
+            content:url('/assets/list_icon.svg');
+            transform: rotate(360deg);
+            transition: transform 1s;
+
+        }
+    }
+
+
+}
