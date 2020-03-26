@@ -22,7 +22,7 @@ const userData = {
 export class SignalingService {
   private socket;
   private peers: any = [];
-
+  private dataChannels: any = [];
   constructor() { 
     this.socket = socketIo(SERVER_URL);
   }
@@ -43,6 +43,8 @@ export class SignalingService {
       const peer_connection = new RTCPeerConnection(
         PEER_CONNECTION_CONFIG                         
       );
+      
+     
       this.peers[peer_id] = peer_connection;
       if (config.should_create_offer) {
         console.log("Creating RTC offer to ", peer_id);
@@ -55,8 +57,14 @@ export class SignalingService {
                 console.log("Offer setLocalDescription succeeded"); 
               })
               .catch((err) => console.log("Offer setLocalDescription failed!", err));
+            
           })
           .catch((err) => console.log("Error sending offer: ", err));
+        const dc = peer_connection.createDataChannel('chat');
+        dc.onopen = () => console.log('onOpen');
+        dc.onclose = () => console.log('onClose');
+        dc.onmessage = (event) => console.log(event.data);
+        this.dataChannels.push(dc);
       }
     });
 
@@ -123,5 +131,9 @@ export class SignalingService {
   }
   leaveChannel(channel) {
     this.socket.emit('part', channel);
+  }
+  sendMessage(message: string) {
+    console.log(this.peers);
+    this.dataChannels.forEach((channel) => channel.send(message));
   }
 }

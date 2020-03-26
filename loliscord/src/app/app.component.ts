@@ -8,6 +8,7 @@ import {SignalingService} from './services/signaling.service';
 })
 export class AppComponent {
   title = 'loliscord';
+  peers = [];
   constructor(
     private signalingService: SignalingService,
   ) 

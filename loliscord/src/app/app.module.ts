@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //angular bootstrap
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+//form
+import { FormsModule } from '@angular/forms';
 //Material component
 import {MatInputModule} from '@angular/material/input';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -56,6 +58,7 @@ import { ChannelChatComponent } from './channel-chat/channel-chat.component';
     MatSliderModule,
     MatSlideToggleModule,
     MatSidenavModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {SignalingService} from 'src/app/services/signaling.service';
 
 @Component({
   selector: 'app-channel-chat',
@@ -6,10 +7,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./channel-chat.component.scss']
 })
 export class ChannelChatComponent implements OnInit {
-
-  constructor() { }
+  message: string;
+  constructor(
+    private signalingService: SignalingService,
+  ) 
+  { }
 
   ngOnInit(): void {
   }
-
+  sendMessage() {
+    console.log(this.message);
+    this.signalingService.sendMessage(this.message);
+  }
 }
