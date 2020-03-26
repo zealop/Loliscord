@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "loliscord"
+  "defaultProject": "loliscord",
+  "cli": {
+    "analytics": false
+  }
 }
