@@ -1,0 +1,23 @@
+
+<div class="body">
+  <mat-spinner *ngIf="isLoading">
+  </mat-spinner>
+  <div class="input-container" *ngIf="!isLoading">
+    <mat-form-field>
+      <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"
+      (keypress)="sendMessage($event)"></textarea>
+    </mat-form-field>
+    <mat-icon>send</mat-icon>
+  </div>
+  <div class="msg-area-container container">
+    <div class="msg-container row" *ngFor="let msg of messages" >
+      <div class="col-auto msg-ava">
+     
+      </div>  
+      <div class="col user-and-msg">
+        <div class="row msg-user">{{msg.user}}</div>
+        <div class="row msg-content">{{msg.content}}</div>
+      </div>
+    </div>
+  </div>
+</div>

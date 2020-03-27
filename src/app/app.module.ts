@@ -7,7 +7,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //angular bootstrap
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 //form
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {TextFieldModule} from '@angular/cdk/text-field';
 //Material component
 import {MatInputModule} from '@angular/material/input';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -26,6 +27,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatIconModule} from '@angular/material/icon';
@@ -38,17 +40,20 @@ import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
 
+
 import { ServerBarComponent } from './server-bar/server-bar.component';
 import { ChannelBarComponent } from './channel-bar/channel-bar.component';
 import { MemberBarComponent } from './member-bar/member-bar.component';
 import { ChannelChatComponent } from './channel-chat/channel-chat.component';
+import { IdentityDialogComponent } from './identity-dialog/identity-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
     ServerBarComponent,
     ChannelBarComponent,
     MemberBarComponent,
-    ChannelChatComponent
+    ChannelChatComponent,
+    IdentityDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -58,7 +63,16 @@ import { ChannelChatComponent } from './channel-chat/channel-chat.component';
     MatSliderModule,
     MatSlideToggleModule,
     MatSidenavModule,
+    MatInputModule,
     FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    TextFieldModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,69 @@
+div.body {
+  background-color:rgb(54, 57, 63);
+  color: white;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  mat-spinner {
+    position: fixed;
+    top: 45%;
+    left: 45%;
+  }
+  .input-container{
+    background-color: rgb(64, 68, 75);
+    margin: 20px 16px;
+    display:flex;
+    align-items: center;
+    mat-form-field {
+      flex-grow: 1;
+      textarea{
+        box-sizing: content-box;
+        caret-color: white;
+        padding: 10px;
+      }
+    }
+    mat-icon {
+      margin: 10px;
+    }
+  }
+  .msg-area-container{
+    margin: 0;
+    .msg-container{
+      margin: 0 0 20px 0;
+      .msg-ava{
+        background-image: url('src/assets/ava.png');
+        height: 40px;
+        width: 40px;
+        background-size: 100% 100%;
+        border-radius: 50%;
+        margin-right: 15px;
+      }
+      .msg-user{
+        font-weight: bold;
+      }
+    }
+  }
+  
+}
+::ng-deep .mat-form-field-underline {
+  display: none;
+}
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-infix {
+  border: none;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}

@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Observable, Observer } from 'rxjs';
+import { Observable, Observer, Subject } from 'rxjs';
 
 import * as socketIo from 'socket.io-client';
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
-const ICE_SERVERS: RTCIceServer[] = [
-  {urls: ['stun:stun.example.com', 'stun:stun-1.example.com']},
-  {urls: 'stun:stun.l.google.com:19302'}
-];
 const PEER_CONNECTION_CONFIG: RTCConfiguration = {
-  iceServers: ICE_SERVERS
+  iceServers: [
+    {urls: 'stun:stun.l.google.com:19302' },
+  ]
 };
-//const SERVER_URL = "https://loliscordapi.herokuapp.com";
-const SERVER_URL = "http://localhost:8000"
+const SERVER_URL = "https://loliscordapi.herokuapp.com";
+//const SERVER_URL = "http://localhost:8000"
 const DEFAULT_CHANNEL = 'some-global-channel-name';
 const userData = {
   placeholder: 'placeholder',
@@ -20,11 +19,12 @@ const userData = {
   providedIn: 'root'
 })
 export class SignalingService {
-  private socket;
-  private peers: any = [];
-  private dataChannels: any = [];
+  private socket = socketIo(SERVER_URL);
+  private peers: any = {};
+  private dataChannels: any = {};
+
+  public msgSubject: Subject<MessageEvent>= new Subject<MessageEvent>();
   constructor() { 
-    this.socket = socketIo(SERVER_URL);
   }
   initRTC() {
     this.socket.on('connect', () => {
@@ -34,7 +34,9 @@ export class SignalingService {
 
     this.socket.on('disconnect', () =>{
       console.log('Disconnected from signaling server');
-      this.peers.forEach((p) => p.close());
+      for (let peer_id in this.peers) {
+        this.peers[peer_id].close();
+    }
     });
 
     this.socket.on('addPeer', (config)  => {
@@ -43,10 +45,29 @@ export class SignalingService {
       const peer_connection = new RTCPeerConnection(
         PEER_CONNECTION_CONFIG                         
       );
-      
      
       this.peers[peer_id] = peer_connection;
+      peer_connection.onicecandidate = (event) => {
+        if (event.candidate) {
+            this.socket.emit('relayICECandidate', {
+                'peer_id': peer_id, 
+                'ice_candidate': {
+                    'sdpMLineIndex': event.candidate.sdpMLineIndex,
+                    'candidate': event.candidate.candidate
+                }
+            });
+        }
+      }
+
       if (config.should_create_offer) {
+        console.log("Creating data channel to ", peer_id);
+        const channel = peer_connection.createDataChannel("chat");
+        channel.onopen = (event) => {
+          console.log('Data channel open', event);
+          channel.send('CONNECTED');
+        }
+        channel.onmessage = this.handleReceivedMessage;
+        this.dataChannels[peer_id] = channel;
         console.log("Creating RTC offer to ", peer_id);
         peer_connection.createOffer()
           .then((description) => {
@@ -55,28 +76,32 @@ export class SignalingService {
               .then( () => {
                 this.socket.emit('relaySessionDescription', {'peer_id': peer_id, 'session_description': description});
                 console.log("Offer setLocalDescription succeeded"); 
+                console.log(channel);
               })
               .catch((err) => console.log("Offer setLocalDescription failed!", err));
             
           })
           .catch((err) => console.log("Error sending offer: ", err));
-        const dc = peer_connection.createDataChannel('chat');
-        dc.onopen = () => console.log('onOpen');
-        dc.onclose = () => console.log('onClose');
-        dc.onmessage = (event) => console.log(event.data);
-        this.dataChannels.push(dc);
       }
+     
+      
     });
 
     this.socket.on('sessionDescription', (config)  => {
       console.log('Remote description received: ', config);
-      var peer_id = config.peer_id;
-      var peer: RTCPeerConnection = this.peers[peer_id];
-      var remote_description = config.session_description;
+      const peer_id = config.peer_id;
+      const peer: RTCPeerConnection = this.peers[peer_id];
+      const remote_description = config.session_description;
       console.log(config.session_description);
-
-      var desc = new RTCSessionDescription(remote_description);
-      var stuff = peer.setRemoteDescription(desc)
+      peer.ondatachannel = (event) => {
+        console.log('Data channel connected', event.channel);
+        const receiveChannel = event.channel;
+        receiveChannel.onopen = () =>  receiveChannel.send('CONNECTED');
+        receiveChannel.onmessage = this.handleReceivedMessage;
+        this.dataChannels[peer_id] = receiveChannel;
+      }
+      const desc = new RTCSessionDescription(remote_description);
+      peer.setRemoteDescription(desc)
         .then(() => {
           console.log("setRemoteDescription succeeded");
           if (remote_description.type == "offer") {
@@ -88,6 +113,7 @@ export class SignalingService {
                     .then( () => { 
                       this.socket.emit('relaySessionDescription', {'peer_id': peer_id, 'session_description': description});
                       console.log("Answer setLocalDescription succeeded");
+                      
                     })
                     .catch( (err) => { 
                       console.log("Answer setLocalDescription failed!", err)
@@ -107,19 +133,22 @@ export class SignalingService {
     });
 
     this.socket.on('iceCandidate', (config) => {
-      var peer = this.peers[config.peer_id];
-      var ice_candidate = config.ice_candidate;
+      const peer = this.peers[config.peer_id];
+      const ice_candidate = config.ice_candidate;
       peer.addIceCandidate(new RTCIceCandidate(ice_candidate));
     });
 
     this.socket.on('removePeer', (config) => {
       console.log('Signaling server said to remove peer:', config);
-      var peer_id = config.peer_id;
+      const peer_id = config.peer_id;
       if (peer_id in this.peers) {
         this.peers[peer_id].close();
       }
-
+      if (peer_id in this.dataChannels) {
+        this.dataChannels[peer_id].close();
+      }
       delete this.peers[peer_id];
+      delete this.dataChannels[peer_id];
     });
 
   }
@@ -133,7 +162,12 @@ export class SignalingService {
     this.socket.emit('part', channel);
   }
   sendMessage(message: string) {
-    console.log(this.peers);
-    this.dataChannels.forEach((channel) => channel.send(message));
+    for(let peer_id in this.dataChannels) {
+      if(this.dataChannels[peer_id].readyState == 'open')
+        this.dataChannels[peer_id].send(message); 
+    }
+  }
+  handleReceivedMessage = (event: MessageEvent) => {
+    this.msgSubject.next(event);
   }
 }
