@@ -1,10 +1,12 @@
-<h1 mat-dialog-title>Whalecum</h1>
+<h1 mat-dialog-title>Whalecum, {{currentUser}}.</h1>
 <div mat-dialog-content>
   <p>What should we call you?</p>
-  <mat-form-field floatLabel="never">
-    <input matInput [(ngModel)]="currentUser" placeholder="Linh?" (keypress)="confirmName($event)">
+  <mat-form-field floatLabel="never" appearance="outline">
+    <input matInput 
+          [(ngModel)]="currentUser" 
+          (keypress)="confirmName($event)">
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button #ok mat-button [mat-dialog-close]="currentUser" cdkFocusInitial>Ok</button>
+  <button class="btn" #ok mat-button [mat-dialog-close]="currentUser" cdkFocusInitial>Ok</button>
 </div>
