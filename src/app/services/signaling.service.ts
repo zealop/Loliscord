@@ -21,9 +21,11 @@ const userData = {
 export class SignalingService {
   private socket = socketIo(SERVER_URL);
   private peers: any = {};
+  private peersVoice: any = {}
   private dataChannels: any = {};
 
   public msgSubject: Subject<MessageEvent>= new Subject<MessageEvent>();
+  public trackSubject: Subject<any> = new Subject<any>();
   constructor() { 
   }
   initRTC() {
@@ -42,10 +44,12 @@ export class SignalingService {
     this.socket.on('addPeer', (config)  => {
       console.log('Signaling server said to add peer:', config);
       const peer_id = config.peer_id;
+      //create peer connection
       const peer_connection = new RTCPeerConnection(
         PEER_CONNECTION_CONFIG                         
       );
-     
+      //on track(voice/video) event handler
+      peer_connection.ontrack = this.handleReceivedTrack;
       this.peers[peer_id] = peer_connection;
       peer_connection.onicecandidate = (event) => {
         if (event.candidate) {
@@ -162,12 +166,24 @@ export class SignalingService {
     this.socket.emit('part', channel);
   }
   sendMessage(message: string) {
-    for(let peer_id in this.dataChannels) {
+    for(const peer_id in this.dataChannels) {
       if(this.dataChannels[peer_id].readyState == 'open')
         this.dataChannels[peer_id].send(message); 
     }
   }
   handleReceivedMessage = (event: MessageEvent) => {
     this.msgSubject.next(event);
+  }
+  handleReceivedTrack = (event: RTCTrackEvent) => {
+    this.trackSubject.next(event);
+  }
+  async joinVoice() {
+    const localStream: MediaStream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
+    for(const track of localStream.getTracks()) {
+      for(const peer_id in this.dataChannels) {
+        this.peers[peer_id].addTrack(track); 
+      }
+    }
+    console.log('Done join voice');
   }
 }

@@ -1,6 +1,10 @@
-div {
+div.body {
   background-color:rgb(47, 49, 54);
   color: white;
   height: 100%;
   width: 230px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

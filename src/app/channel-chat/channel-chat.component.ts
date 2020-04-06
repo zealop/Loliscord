@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import {SignalingService} from 'src/app/services/signaling.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
@@ -19,6 +19,7 @@ export class ChannelChatComponent implements OnInit {
     private signalingService: SignalingService,
   ) 
   { }
+  
   public messages: Array<Messages> = [];
   ngOnInit(): void {
     this.signalingService.msgSubject.subscribe((event) => {
@@ -26,7 +27,18 @@ export class ChannelChatComponent implements OnInit {
       if(event.data == "CONNECTED") {
         this.isLoading = false;
       }
-      else this.messages.push(JSON.parse(event.data));
+      else this.onNewMessage(JSON.parse(event.data));
+    });
+  }
+
+  @ViewChildren('msg') msgView: QueryList<ElementRef>;
+  ngAfterViewInit() {
+    this.msgView.changes.subscribe(() => {
+      
+      if(this.msgView && this.msgView.last) {
+        console.log(this.msgView.last.nativeElement);
+        this.msgView.last.nativeElement.scrollIntoView();
+      }
     });
   }
   sendMessage(event) {
@@ -39,9 +51,13 @@ export class ChannelChatComponent implements OnInit {
         content: event.target.value,
         timeStamp: time,
       }
-      this.messages.push(obj);
+      this.onNewMessage(obj);
       this.signalingService.sendMessage(JSON.stringify(obj));
       event.target.value ='';
     }   
+  }
+  
+  onNewMessage(msg: Messages) {
+    this.messages.push(msg);
   }
 }
