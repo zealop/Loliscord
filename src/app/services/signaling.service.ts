@@ -175,10 +175,13 @@ export class SignalingService {
     this.msgSubject.next(event);
   }
   handleReceivedTrack = (event: RTCTrackEvent) => {
+    console.log('receive track: ', event);
     this.trackSubject.next(event);
   }
   async joinVoice() {
     const localStream: MediaStream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
+    console.log(localStream)
+
     for(const track of localStream.getTracks()) {
       for(const peer_id in this.dataChannels) {
         this.peers[peer_id].addTrack(track); 
