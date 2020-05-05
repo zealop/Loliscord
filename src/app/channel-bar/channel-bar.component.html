@@ -1,4 +1,5 @@
 <div class="body">
+  <audio *ngIf="stream" [srcObject]="stream" autoplay></audio>
   <button mat-button class="join-voice" (click)="joinVoice()">
     Join voice
   </button>

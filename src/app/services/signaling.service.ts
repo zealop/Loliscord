@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ɵCompiler_compileModuleSync__POST_R3__ } from '@angular/core';
 import { Observable, Observer, Subject } from 'rxjs';
 
 import * as socketIo from 'socket.io-client';
@@ -41,7 +41,7 @@ export class SignalingService {
     }
     });
 
-    this.socket.on('addPeer', (config)  => {
+    this.socket.on('addPeer', async (config)  => {
       console.log('Signaling server said to add peer:', config);
       const peer_id = config.peer_id;
       //create peer connection
@@ -51,6 +51,25 @@ export class SignalingService {
       //on track(voice/video) event handler
       peer_connection.ontrack = this.handleReceivedTrack;
       this.peers[peer_id] = peer_connection;
+
+      peer_connection.onnegotiationneeded = async () => {
+        if(config.should_create_offer) {
+          console.log("Renegotiation needed");
+          peer_connection.createOffer()
+            .then((description) => {
+              console.log("description is: ", description);
+              peer_connection.setLocalDescription(description)
+                .then( () => {
+                  this.socket.emit('relaySessionDescription', {'peer_id': peer_id, 'session_description': description});
+                  console.log("Offer setLocalDescription succeeded"); 
+                })
+                .catch((err) => console.log("Offer setLocalDescription failed!", err));
+              
+            })
+            .catch((err) => console.log("Error sending offer: ", err));
+        }
+      };
+
       peer_connection.onicecandidate = (event) => {
         if (event.candidate) {
             this.socket.emit('relayICECandidate', {
@@ -72,7 +91,7 @@ export class SignalingService {
         }
         channel.onmessage = this.handleReceivedMessage;
         this.dataChannels[peer_id] = channel;
-        console.log("Creating RTC offer to ", peer_id);
+        console.log("Creating initial RTC offer to ", peer_id);
         peer_connection.createOffer()
           .then((description) => {
             console.log("description is: ", description);
@@ -80,7 +99,6 @@ export class SignalingService {
               .then( () => {
                 this.socket.emit('relaySessionDescription', {'peer_id': peer_id, 'session_description': description});
                 console.log("Offer setLocalDescription succeeded"); 
-                console.log(channel);
               })
               .catch((err) => console.log("Offer setLocalDescription failed!", err));
             
@@ -175,18 +193,16 @@ export class SignalingService {
     this.msgSubject.next(event);
   }
   handleReceivedTrack = (event: RTCTrackEvent) => {
-    console.log('receive track: ', event);
+    console.log('Receive track: ', event);
     this.trackSubject.next(event);
   }
   async joinVoice() {
     const localStream: MediaStream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
-    console.log(localStream)
 
     for(const track of localStream.getTracks()) {
-      for(const peer_id in this.dataChannels) {
-        this.peers[peer_id].addTrack(track); 
+      for(const peer_id in this.peers) {
+        this.peers[peer_id].addTrack(track);
       }
     }
-    console.log('Done join voice');
   }
 }
