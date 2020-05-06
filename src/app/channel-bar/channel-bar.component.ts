@@ -18,11 +18,14 @@ export class ChannelBarComponent implements OnInit {
   @ViewChild('body') body: ElementRef;
   ngOnInit(): void {
     this.signalingService.trackSubject.subscribe((event) => {
-      console.log("Track Subject", event);
       this.stream.addTrack(event.track);
+      console.log("Current stream", this.stream);
     });
   }
   joinVoice() {
     this.signalingService.joinVoice();
+  }
+  leaveVoice() {
+    this.signalingService.leaveVoice();
   }
 }
