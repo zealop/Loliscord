@@ -1,9 +1,11 @@
 <div class="body">
-  <audio *ngIf="stream" [srcObject]="stream" autoplay></audio>
+  <div *ngFor="let loli of lolis">
+    <div   *ngIf="loli.stream">
+      <span>{{loli.userData.username}}</span>
+      <audio  *ngIf="loli.stream" [srcObject]="loli.stream" autoplay></audio>
+    </div>
+  </div>
   <button mat-button class="join-voice" (click)="joinVoice()">
     Join voice
-  </button>
-  <button mat-button class="join-voice" (click)="leaveVoice()">
-    Leave voice
   </button>
 </div>

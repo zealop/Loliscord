@@ -5,6 +5,10 @@ div.body {
   width: 230px;
   
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  .join-voice {
+    position: absolute;
+    top: 50%;
+  }
 }

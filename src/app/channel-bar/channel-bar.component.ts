@@ -1,5 +1,5 @@
 import { Component, Renderer2, OnInit, ViewChild, ElementRef } from '@angular/core';
-import {SignalingService} from 'src/app/services/signaling.service';
+import {SignalingService, LoliscordConnection} from 'src/app/services/signaling.service';
 @Component({
   selector: 'app-channel-bar',
   templateUrl: './channel-bar.component.html',
@@ -15,12 +15,18 @@ export class ChannelBarComponent implements OnInit {
 
   stream: MediaStream = new MediaStream();
 
+  lolis: Array<LoliscordConnection> = [];
+
   @ViewChild('body') body: ElementRef;
   ngOnInit(): void {
     this.signalingService.trackSubject.subscribe((event) => {
-      this.stream.addTrack(event.track);
-      console.log("Current stream", this.stream);
+      this.lolis = [];
+      for(let peer_id in event) {
+        this.lolis.push(event[peer_id]);
+      }
+      console.log(this.lolis);
     });
+   
   }
   joinVoice() {
     this.signalingService.joinVoice();

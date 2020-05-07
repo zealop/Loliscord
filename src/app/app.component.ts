@@ -17,10 +17,11 @@ export class AppComponent {
   ) 
   {}
   ngOnInit() {
-    this.signalingService.initRTC();
     const dialogRef = this.dialog.open(IdentityDialogComponent, { disableClose: true });
     dialogRef.afterClosed().subscribe(rs => {
       this.currentUser = rs;
+      this.signalingService.setUserData({'username': this.currentUser});
+      this.signalingService.initRTC();
     });
 
   }
