@@ -62,12 +62,12 @@ export class SignalingService {
       const userData = config.userData;
       //create peer connection
       const peer_connection = new RTCPeerConnection(PEER_CONNECTION_CONFIG);
-      const peerStream = new MediaStream();
+  
       const loli_connection: LoliscordConnection = {
         userData: userData,
         RTC: peer_connection,
         dataChannel: null,
-        stream: peerStream,
+        stream: null,
       };
       //on track(voice/video) event handler
       peer_connection.ontrack = this.handleReceivedTrack;
@@ -224,6 +224,7 @@ export class SignalingService {
     console.log('Receive track: ', event);
     for(let peer_id in this.peers) {
       if(this.peers[peer_id].RTC == event.target)
+        console.log("Adding stream");
         this.peers[peer_id].stream = event.streams[0];
         console.log(this.peers[peer_id]);
         this.trackSubject.next(this.peers);
