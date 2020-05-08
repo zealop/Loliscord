@@ -15,21 +15,23 @@ export class ChannelBarComponent implements OnInit {
 
   stream: MediaStream = new MediaStream();
 
-  lolis: Array<LoliscordConnection> = [];
+  lolis: Array<any> =  [];
+  id_list: Array<any> = []
 
   @ViewChild('body') body: ElementRef;
   ngOnInit(): void {
-    this.signalingService.trackSubject.subscribe((event) => {
-      this.lolis = [];
-      for(let peer_id in event) {
-        this.lolis.push(event[peer_id]);
-      }
-      console.log(this.lolis);
+      this.signalingService.trackSubject.subscribe((event) => {
+        console.log(event);
+        if(!this.id_list.includes(event.peer_id))
+          this.lolis.push(new MediaStream([event.track]));
+        console.log(this.lolis);
     });
    
   }
-  joinVoice() {
-    this.signalingService.joinVoice();
+  async joinVoice() {
+    const  localStream: MediaStream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
+    const localTrack: MediaStreamTrack = localStream.getAudioTracks()[0];
+    this.signalingService.joinVoice(localTrack);
   }
   leaveVoice() {
     this.signalingService.leaveVoice();

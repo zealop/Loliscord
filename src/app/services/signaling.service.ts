@@ -33,10 +33,10 @@ export class SignalingService {
 
   public userData: any = {};
 
-  public isVoiceCalling: boolean = false;
+  public localTrack: MediaStreamTrack;
 
   public msgSubject: Subject<MessageEvent>= new Subject<MessageEvent>();
-  public trackSubject: Subject<object> = new Subject<object>();
+  public trackSubject: Subject<any> = new Subject<any>();
 
 
 
@@ -56,7 +56,7 @@ export class SignalingService {
     }
     });
 
-    this.socket.on('addPeer', async (config)  => {
+    this.socket.on('addPeer', (config)  => {
       console.log('Signaling server said to add peer:', config);
       const peer_id = config.peer_id;
       const userData = config.userData;
@@ -67,20 +67,14 @@ export class SignalingService {
         userData: userData,
         RTC: peer_connection,
         dataChannel: null,
-        stream: null,
+        stream: new MediaStream,
       };
       //on track(voice/video) event handler
+      // peer_connection.ontrack = this.handleReceivedTrack;
       peer_connection.ontrack = this.handleReceivedTrack;
       this.peers[peer_id] = loli_connection;
-      
-      console.log(this.peers);
-      if(this.isVoiceCalling) {
-        const localStream: MediaStream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});
-
-        for(const track of localStream.getTracks()) {
-          peer_connection.addTrack(track, localStream);
-        }
-      }
+  
+      if(this.localTrack) peer_connection.addTrack(this.localTrack);
 
       peer_connection.onnegotiationneeded = () => {
         if(config.should_create_offer) {
@@ -224,28 +218,25 @@ export class SignalingService {
     console.log('Receive track: ', event);
     for(let peer_id in this.peers) {
       if(this.peers[peer_id].RTC == event.target)
-        console.log("Adding stream");
-        this.peers[peer_id].stream = event.streams[0];
-        console.log(this.peers[peer_id]);
-        this.trackSubject.next(this.peers);
+        console.log("Adding track");
+        //this.peers[peer_id].stream.addTrack(event.track);
+        this.trackSubject.next({
+          'peer_id': peer_id,
+          'track': event.track,
+        });
         return;
     }
     
   }
-  async joinVoice() {
-    console.log("starting join voice");
-    const  localStream: MediaStream = await navigator.mediaDevices.getUserMedia({video: false, audio: true});   
-    console.log("Got local stream", localStream);
-    this.isVoiceCalling = true;
-    for(const track of localStream.getTracks()) {
-      for(let peer_id in this.peers) {
-        console.log("Adding track: ", track, "to Peer: ", peer_id);
-        this.peers[peer_id].RTC.addTrack(track, localStream);
-      }
+  async joinVoice(track: MediaStreamTrack) {
+    if(!this.localTrack) this.localTrack = track;
+    for(let peer_id in this.peers) {
+      console.log("Adding track: ", track, "to Peer: ", peer_id);
+      this.peers[peer_id].RTC.addTrack(track);
     }
   }
+
   async leaveVoice() {
-    this.isVoiceCalling = false;
   }
 
   setUserData(userData) {
