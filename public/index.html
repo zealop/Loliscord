@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <!-- socket.io -->
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+    <script src="adapter.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <title>Bootstrap example</title>
+</head>
+
+<body> 
+    <div class="d-flex" id="wrapper">
+        
+        <div class="border-end bg-white flex-shrink-0 hide" id="sidebar-wrapper">
+            <div class="sidebar-heading border-bottom bg-light">Voice Call</div>
+            <div id="voice">
+                
+            </div>
+        </div>
+
+        <div id="page-content-wrapper" >
+            
+            <div class="container-fluid d-flex flex-column flex-align-items-end m-0 p-0 bg-dark text-white" >
+                <button class="btn btn-primary" id="sidebar-toggle">
+                    Menu
+                </button>
+                <div class="row m-0 p-2 flex-grow-1"  id="mess">
+        
+                </div>
+                <div class="row m-0 p-2"  id="form">
+                    <div class="bg-secondary text-white breaker" id="input" contenteditable="true"></div>
+                    <input type="submit" style="display: none" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</body>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="script.js"></script> 
+</html>

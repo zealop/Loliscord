@@ -1,0 +1,47 @@
+html, body, #page-content-wrapper, #wrapper {
+    height: 100%;
+}
+body {
+    direction: ltr;
+}
+.container-fluid {
+    height: 100%;
+}
+#mess {
+    overflow: hidden scroll;
+    align-content: baseline;
+}
+.max-content {
+    height: max-content;
+}
+#input {
+    min-height: 40px;
+    
+    padding: 5px;
+    
+}
+.breaker {
+    overflow: hidden;
+    word-wrap: break-word;
+}
+#sidebar-wrapper {
+    width: 300px;
+    transition: width .5s;
+}
+#sidebar-toggle {
+    display: none;
+}
+.hide {
+    width: 0 !important;
+}
+@media (max-width: 768px) {
+    
+    #sidebar-toggle {
+        display: block;
+    }
+}
+   
+#page-content-wrapper {
+    flex-grow: 1;
+    
+}

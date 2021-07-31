@@ -1,8 +1,0 @@
-<div class="body">
-  <div *ngFor="let loli of lolis">
-      <audio *ngIf="loli.active" [srcObject]="loli" autoplay controls style="width:200px;"></audio>
-  </div>
-  <button mat-button class="join-voice" (click)="joinVoice()">
-    Join voice
-  </button>
-</div>
